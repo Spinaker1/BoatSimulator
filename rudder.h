@@ -6,10 +6,10 @@
 
 GLfloat rudderVertices[] = {
 	// coordinates			// color			// texture
-	0.0f, -0.3f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-	0.0f, -0.3f, 0.2f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-	0.0f, -0.9f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-	0.0f, -0.9f, 0.2f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+	0.0f, -0.3f, 0.0f, 0.0f, 1.0f, 1.0f, 
+	0.0f, -0.3f, 0.2f, 0.0f, 1.0f, 1.0f, 
+	0.0f, -0.9f, 0.0f, 0.0f, 1.0f, 1.0f, 
+	0.0f, -0.9f, 0.2f, 0.0f, 1.0f, 1.0f, 
 };
 
 GLuint rudderIndices[] = {
@@ -35,11 +35,11 @@ void createRudder(GLuint & VBO, GLuint & EBO, GLuint & VAO)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rudderIndices), rudderIndices, GL_STATIC_DRAW);
 
 	// vertex geometry data
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 
 	// vertex color data
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
