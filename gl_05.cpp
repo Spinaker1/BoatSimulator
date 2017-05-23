@@ -10,6 +10,7 @@
 #include "boat.h""
 #include "rudder.h"
 #include "shprogram.h"
+#include "wheel.h"
 
 using namespace std;
 
@@ -35,24 +36,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 }
 
-GLuint LoadMipmapTexture(GLuint texId, const char* fname)
-{
-	int width, height;
-	unsigned char* image = SOIL_load_image(fname, &width, &height, 0, SOIL_LOAD_RGB);
-	if (image == nullptr)
-		throw exception("Failed to load texture file");
 
-	GLuint texture;
-	glGenTextures(1, &texture);
-
-	glActiveTexture(texId);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	SOIL_free_image_data(image);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	return texture;
-}
 
 ostream& operator<<(ostream& os, const glm::mat4& mx)
 {
@@ -93,6 +77,9 @@ int main()
 		// Accept fragment if it closer to the camera than the former one
 		glDepthFunc(GL_LESS);
 
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		glewExperimental = GL_TRUE;
 		if (glewInit() != GLEW_OK)
 			throw exception("GLEW Initialization failed");
@@ -106,8 +93,8 @@ int main()
 		glGetIntegerv(GL_MAX_TEXTURE_COORDS, &nrAttributes);
 		cout << "Max texture coords allowed: " << nrAttributes << std::endl;
 
-		// Build, compile and link shader program
 		ShaderProgram theProgram("boat.vert", "boat.frag");
+		ShaderProgram theProgram2("wheel.vert", "wheel.frag");
 
 		GLuint VBO, EBO, VAO;
 		createBoat(VBO, EBO, VAO);
@@ -115,19 +102,8 @@ int main()
 		GLuint VBO2, EBO2, VAO2;
 		createRudder(VBO2, EBO2, VAO2);
 
-
-		/*
-		// Set the texture wrapping parameters
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// Set texture wrapping to GL_REPEAT (usually basic wrapping method)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		// Set texture filtering parameters
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		// prepare textures
-		GLuint texture0 = LoadMipmapTexture(GL_TEXTURE0, "iipw.png");
-		GLuint texture1 = LoadMipmapTexture(GL_TEXTURE1, "weiti.png");
-		*/
+		GLuint VBO3, EBO3, VAO3;
+		createWheel(VBO3, EBO3, VAO3);
 
 		// main event loop
 		while (!glfwWindowShouldClose(window))
@@ -139,17 +115,9 @@ int main()
 			glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			// Bind Textures using texture units
-			/*
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture0);
-			glUniform1i(glGetUniformLocation(theProgram.get_programID(), "Texture0"), 0);
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, texture1);
-			glUniform1i(glGetUniformLocation(theProgram.get_programID(), "Texture1"), 1);
-			*/
 			updateBoat(theProgram, VAO, EBO);
 			updateRudder(theProgram, VAO2, EBO2);
+			updateWheel(theProgram2, VAO3, EBO3);
 			// Swap the screen buffers
 			glfwSwapBuffers(window);
 		}

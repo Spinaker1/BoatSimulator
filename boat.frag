@@ -12,6 +12,6 @@ void main()
 	float ambientStrength = 0.1f;
     vec3 ambient = ambientStrength * lightColor;
 
-    vec3 result = ambient * vecColor;
+    vec3 result = vecColor;
     color = vec4(result, 1.0f);
 }

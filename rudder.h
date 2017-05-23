@@ -53,6 +53,8 @@ void createRudder(GLuint & VBO, GLuint & EBO, GLuint & VAO)
 
 void updateRudder(ShaderProgram theProgram, GLuint & VAO, GLuint & EBO)
 {
+	theProgram.Use();
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glm::mat4 trans;
 	trans = glm::rotate(trans, -(float)glm::radians(rudderRotAngle), glm::vec3(0.0, 1.0, 0.0));
@@ -74,8 +76,6 @@ void updateRudder(ShaderProgram theProgram, GLuint & VAO, GLuint & EBO)
 	GLint viewLoc = glGetUniformLocation(theProgram.get_programID(), "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
-	// Draw our first triangle
-	theProgram.Use();
 	
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, _countof(rudderIndices), GL_UNSIGNED_INT, 0);
