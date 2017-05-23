@@ -1,29 +1,35 @@
 #ifndef wheel_h
 #define wheel_h
 
-
-
-GLuint indices[] = {
+GLuint wheelIndices[] = {
 	0, 1, 2,
 	0, 2, 3,
+};
+
+GLfloat wheelVertices[] = {
+	// coordinates			// color			// texture
+	0.2f, 0.2f, -0.799, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+	-0.2f, 0.2f, -0.799f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+	-0.2f, -0.2f, -0.799f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+	0.2f, -0.2f, -0.799f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 };
 
 GLuint texture0;
 GLuint texture;
 
+static GLfloat wheelRotAngle = 0;
+
 GLuint LoadMipmapTexture(GLuint texId, const char* fname)
 {
-
-
 	int width, height;
-	unsigned char* image = SOIL_load_image(fname, &width, &height, 0, SOIL_LOAD_RGB);
+	unsigned char* image = SOIL_load_image(fname, &width, &height, 0, SOIL_LOAD_RGBA);
 
 	GLuint texture;
 	glGenTextures(1, &texture);
 
 	glActiveTexture(texId);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	SOIL_free_image_data(image);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -32,15 +38,6 @@ GLuint LoadMipmapTexture(GLuint texId, const char* fname)
 
 void createWheel(GLuint & VBO, GLuint & EBO, GLuint & VAO)
 {
-	GLfloat vertices[] = {
-		// coordinates			// color			// texture
-		0.2f, 0.4f, -0.799, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-		-0.2f, 0.4f, -0.799f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-		-0.2f, -0.0f, -0.799f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-		0.2f, -0.0f, -0.799f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-	};
-
-
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
@@ -49,10 +46,10 @@ void createWheel(GLuint & VBO, GLuint & EBO, GLuint & VAO)
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(wheelVertices), wheelVertices, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(wheelIndices), wheelIndices, GL_STATIC_DRAW);
 
 	// vertex geometry data
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
@@ -94,6 +91,12 @@ void updateWheel(ShaderProgram theProgram, GLuint & VAO, GLuint & EBO)
 
 	glm::mat4 trans;
 	trans = glm::rotate(trans, -glm::radians(boatRotAngle), glm::vec3(0.0, 1.0, 0.0));
+	trans = glm::rotate(trans, -(float)glm::radians(wheelRotAngle), glm::vec3(0.0, 0.0, 1.0));
+
+	if (wheelRotAngle >= 500)
+		wheelRotAngle = 500;
+	if (wheelRotAngle <= -500)
+		wheelRotAngle = -500;
 
 	GLuint transformLoc = glGetUniformLocation(theProgram.get_programID(), "transform");
 	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
@@ -107,7 +110,7 @@ void updateWheel(ShaderProgram theProgram, GLuint & VAO, GLuint & EBO)
 	// Draw our first triangl
 
 	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, _countof(indices), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, _countof(wheelIndices), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }

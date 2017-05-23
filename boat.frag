@@ -1,6 +1,4 @@
 #version 330 core
-in vec3 vecColor;
-in vec2 TexCoord;
 
 out vec4 color;
 
@@ -12,6 +10,5 @@ void main()
 	float ambientStrength = 0.1f;
     vec3 ambient = ambientStrength * lightColor;
 
-    vec3 result = vecColor;
-    color = vec4(result, 1.0f);
+    color = vec4(1.0,1.0,0.0, 1.0f);
 }

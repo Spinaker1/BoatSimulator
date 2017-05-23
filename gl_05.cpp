@@ -26,11 +26,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 	if (key == GLFW_KEY_A)
 	{
+		wheelRotAngle -= 5.0;
 		rudderRotAngle += 0.6f;
 		rotationFactor -= 0.01;
 	}
 	if (key == GLFW_KEY_D)
 	{
+		wheelRotAngle += 5.0;
 		rudderRotAngle -= 0.6f;
 		rotationFactor += 0.01;
 	}
