@@ -61,8 +61,6 @@ void updateRudder(ShaderProgram theProgram, GLuint & VAO, GLuint & EBO)
 	if (rudderRotAngle <= -60)
 		rudderRotAngle = -60;
 
-	std::cout << rotationFactor;
-
 	GLuint transformLoc = glGetUniformLocation(theProgram.get_programID(), "transform");
 	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 

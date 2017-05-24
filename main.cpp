@@ -11,10 +11,11 @@
 #include "rudder.h"
 #include "shprogram.h"
 #include "wheel.h"
+#include "skybox.h"
 
 using namespace std;
 
-const GLuint WIDTH = 800, HEIGHT = 600;
+const GLuint WIDTH = 1000, HEIGHT = 600;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
@@ -22,7 +23,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	if (key == GLFW_KEY_W)
 	{
-		boatRotAngle += 0.3*rotationFactor;
+		float x = 0.3*rotationFactor;
+		boatRotAngle += x;
+		view = glm::rotate(view, glm::radians(x), glm::vec3(0.0, 1.0, 0.0));
 	}
 	if (key == GLFW_KEY_A)
 	{
@@ -54,7 +57,7 @@ ostream& operator<<(ostream& os, const glm::mat4& mx)
 int main()
 {
 	projection = glm::perspective(45.0f, (float)WIDTH / (float)HEIGHT, 0.4f, 100.0f);
-	view = glm::translate(view, glm::vec3(0.0f, -0.0f, -2.0f));
+	view = glm::translate(view, glm::vec3(0.0f, -0.0f, -1.5f));
 	view = glm::rotate(view, glm::radians((float)20.0), glm::vec3(1.0, 0.1, 0.0));
 
 	if (glfwInit() != GL_TRUE)
@@ -97,6 +100,7 @@ int main()
 
 		ShaderProgram theProgram("boat.vert", "boat.frag");
 		ShaderProgram theProgram2("wheel.vert", "wheel.frag");
+		ShaderProgram theProgram3("skybox.vert", "skybox.frag");
 
 		GLuint VBO, EBO, VAO;
 		createBoat(VBO, EBO, VAO);
@@ -107,6 +111,11 @@ int main()
 		GLuint VBO3, EBO3, VAO3;
 		createWheel(VBO3, EBO3, VAO3);
 
+		GLuint VBO4, EBO4, VAO4;
+		createSkybox(VBO4, EBO4, VAO4);
+
+
+
 		// main event loop
 		while (!glfwWindowShouldClose(window))
 		{
@@ -114,9 +123,10 @@ int main()
 			glfwPollEvents();
 
 			// Clear the colorbuffer
-			glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
+			glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+			updateskybox(theProgram3, VAO4, EBO4);
 			updateBoat(theProgram, VAO, EBO);
 			updateRudder(theProgram, VAO2, EBO2);
 			updateWheel(theProgram2, VAO3, EBO3);
