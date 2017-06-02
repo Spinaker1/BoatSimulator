@@ -105,17 +105,17 @@ void createSkybox(GLuint & VBO, GLuint & EBO, GLuint & VAO)
 
 	// Cubemap (Skybox)
 	vector<const GLchar*> faces;
-	faces.push_back("wheel.png");
-	faces.push_back("wheel.png");
-	faces.push_back("wheel.png");
-	faces.push_back("wheel.png");
-	faces.push_back("wheel.png");
-	faces.push_back("wheel.png");
+	faces.push_back("right.png");
+	faces.push_back("left.png");
+	faces.push_back("top.png");
+	faces.push_back("bottom.png");
+	faces.push_back("back.png");
+	faces.push_back("front.png");
 
 	skyboxTexture = loadCubemap(faces);
 }
 
-void updateskybox(ShaderProgram theProgram, GLuint & VAO, GLuint & EBO)
+void updateSkybox(ShaderProgram theProgram, GLuint & VAO, GLuint & EBO)
 {
 	glDepthMask(GL_FALSE);// Remember to turn depth writing off
 	theProgram.Use();

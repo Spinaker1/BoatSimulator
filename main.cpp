@@ -12,6 +12,7 @@
 #include "shprogram.h"
 #include "wheel.h"
 #include "skybox.h"
+#include "water.h"
 
 using namespace std;
 
@@ -99,8 +100,9 @@ int main()
 		cout << "Max texture coords allowed: " << nrAttributes << std::endl;
 
 		ShaderProgram theProgram("boat.vert", "boat.frag");
-		ShaderProgram theProgram2("wheel.vert", "wheel.frag");
+		ShaderProgram theProgram2("texture.vert", "texture.frag");
 		ShaderProgram theProgram3("skybox.vert", "skybox.frag");
+		ShaderProgram theProgram4("water.vert", "water.frag");
 
 		GLuint VBO, EBO, VAO;
 		createBoat(VBO, EBO, VAO);
@@ -114,7 +116,8 @@ int main()
 		GLuint VBO4, EBO4, VAO4;
 		createSkybox(VBO4, EBO4, VAO4);
 
-
+		GLuint VBO5, EBO5, VAO5;
+		createWater(VBO5, EBO5, VAO5);
 
 		// main event loop
 		while (!glfwWindowShouldClose(window))
@@ -126,9 +129,10 @@ int main()
 			glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			updateskybox(theProgram3, VAO4, EBO4);
+			updateSkybox(theProgram3, VAO4, EBO4);
 			updateBoat(theProgram, VAO, EBO);
-			updateRudder(theProgram, VAO2, EBO2);
+			updateRudder(theProgram2, VAO2, EBO2);
+			updateWater(theProgram4, VAO5, EBO5);
 			updateWheel(theProgram2, VAO3, EBO3);
 			// Swap the screen buffers
 			glfwSwapBuffers(window);

@@ -5,7 +5,7 @@
 #include "shprogram.h"
 
 GLfloat boatVertices[] = {
-	// coordinates			// color			// texture
+	// coordinates			// color			
 	0.4f, -0.2f, -1.0f, 0.0f, 1.0f, 1.0f, 
 	-0.4f, -0.2f, -1.0f, 1.0f, 1.0f, 0.0f, 
 	0.0f, -0.7f, -1.0f, 1.0f, 0.0f, 1.0f, 
@@ -110,6 +110,9 @@ void updateBoat(ShaderProgram theProgram, GLuint & VAO, GLuint & EBO)
 
 	GLint viewLoc = glGetUniformLocation(theProgram.get_programID(), "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+	GLint colorLoc = glGetUniformLocation(theProgram.get_programID(), "vecColor");
+	glUniformMatrix4fv(colorLoc, 1, GL_FALSE, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.0f)));
 
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, _countof(boatIndices), GL_UNSIGNED_INT, 0);
