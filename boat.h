@@ -5,38 +5,44 @@
 #include "shprogram.h"
 
 GLfloat boatVertices[] = {
-	// coordinates			// color			
-	0.4f, -0.2f, -1.0f, 0.0f, 1.0f, 1.0f, 
-	-0.4f, -0.2f, -1.0f, 1.0f, 1.0f, 0.0f, 
+	// coordinates			// normals		
+	0.4f, -0.2f, -1.0f, 0.0f, 1.0f, 1.0f,
+	-0.4f, -0.2f, -1.0f, 1.0f, 1.0f, 0.0f,
 	0.0f, -0.7f, -1.0f, 1.0f, 0.0f, 1.0f, 
 	0.0f, -0.2f, -1.5f, 1.0f, 1.0f, 1.0f, 
-	0.4f, -0.2f, 0.0f, 0.0f, 0.0f, 1.0f, 
-	-0.4f, -0.2f, 0.0f, 1.0f, 0.0f, 0.0f, 
-	0.0f, -0.7f, 0.0f, 0.0f, 1.0f, 0.0f, 
+	0.4f, -0.2f, 0.0f, 0.0f, 0.0f, 1.0f,
+	-0.4f, -0.2f, 0.0f, 0.0f, 0.0f, 1.0f,
+	0.0f, -0.7f, 0.0f, 0.0f, 1.0f, 1.0f,
 
-	0.1f, -0.2f, -0.9f, 0.0f, 1.0f, 0.0f, 
-	-0.1f, -0.2f, -0.9f, 0.0f, 1.0f, 0.0f, 
-	-0.1f, 0.1f, -0.9f, 0.0f, 1.0f, 0.0f, 
-	0.1f, 0.1f, -0.9f, 0.0f, 1.0f, 0.0f, 
+	0.1f, -0.2f, -0.9f, 0.0f, 0.0f, -1.0f, 
+	-0.1f, -0.2f, -0.9f, 0.0f, 0.0f, -1.0f, 
+	-0.1f, 0.1f, -0.9f, 0.0f, 0.0f, -1.0f, 
+	0.1f, 0.1f, -0.9f, 0.0f, 0.0f, -1.0f, 
 
-	0.1f, -0.2f, -0.8f, 0.0f, 1.0f, 0.0f, 
-	-0.1f, -0.2f, -0.8f, 0.0f, 1.0f, 0.0f, 
-	-0.1f, 0.1f, -0.8f, 0.0f, 1.0f, 0.0f, 
-	0.1f, 0.1f, -0.8f, 0.0f, 1.0f, 0.0f, 
+	0.1f, -0.2f, -0.8f, 0.0f, 0.0f, 1.0f, 
+	-0.1f, -0.2f, -0.8f, 0.0f, 0.0f, 1.0f, 
+	-0.1f, 0.1f, -0.8f, 0.0f, 0.0f, 1.0f, 
+	0.1f, 0.1f, -0.8f, 0.0f, 0.0f, 1.0f, 
+
+	0.4f, -0.2f, 0.0f, 0.0f, 0.0f, 1.0f,
+	-0.4f, -0.2f, 0.0f, 0.0f, 0.0f, 1.0f,
+	0.0f, -0.7f, 0.0f, 0.0f, 0.0f, 1.0f,
+
+	0.4f, -0.2f, -1.0f, 0.0f, 1.0f, 0.0f,
+	-0.4f, -0.2f, -1.0f, 0.0f, 1.0f, 0.0f,
+	0.0f, -0.2f, -1.5f, 0.0f, 1.0f, 0.0f,
+	0.4f, -0.2f, 0.0f, 0.0f, 1.0f, 0.0f,
+	-0.4f, -0.2f, 0.0f, 0.0f, 1.0f, .0f,
 };
 
 GLuint boatIndices[] = {
 	0, 1, 2,
 	0, 2, 3,
-	0, 1, 3,
 	1, 2, 3,
-	0, 4, 5,
-	0, 1, 5,
 	0, 4, 6,
 	0, 2, 6,
 	1, 5, 6,
 	1, 2, 6,
-	4, 6, 5,
 
 	7, 8, 9,
 	7, 10, 9,
@@ -44,6 +50,12 @@ GLuint boatIndices[] = {
 	11, 12, 13,
 	11, 14, 13,
 
+	15,16,17,
+
+	18, 21, 22,
+	18, 19, 22,
+	18, 19, 20,
+	/*
 	8, 12, 13,
 	8, 9, 13,
 
@@ -52,6 +64,7 @@ GLuint boatIndices[] = {
 
 	7, 10, 11,
 	7, 14, 11,
+		*/
 };
 
 
@@ -111,8 +124,10 @@ void updateBoat(ShaderProgram theProgram, GLuint & VAO, GLuint & EBO)
 	GLint viewLoc = glGetUniformLocation(theProgram.get_programID(), "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
-	GLint colorLoc = glGetUniformLocation(theProgram.get_programID(), "vecColor");
-	glUniformMatrix4fv(colorLoc, 1, GL_FALSE, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.0f)));
+	glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
+
+	GLint lightLoc = glGetUniformLocation(theProgram.get_programID(), "lightPos");
+	glUniform3fv(lightLoc, 1, glm::value_ptr(lightPos));
 
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, _countof(boatIndices), GL_UNSIGNED_INT, 0);

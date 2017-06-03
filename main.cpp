@@ -17,6 +17,7 @@
 using namespace std;
 
 const GLuint WIDTH = 1000, HEIGHT = 600;
+const float CAMERA_ROTATION = 2.0;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
@@ -39,6 +40,22 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		wheelRotAngle += 5.0;
 		rudderRotAngle -= 0.6f;
 		rotationFactor += 0.01;
+	}
+	if (key == GLFW_KEY_LEFT)
+	{
+		view = glm::rotate(view, glm::radians(-boatRotAngle), glm::vec3(0.0, 1.0, 0.0));
+		view = glm::translate(view, glm::vec3(0.0f, -0.0f, -0.5f));
+		view = glm::rotate(view, glm::radians(CAMERA_ROTATION), glm::vec3(0.0, 1.0, 0.0));
+		view = glm::translate(view, glm::vec3(0.0f, -0.0f, 0.5f));
+		view = glm::rotate(view, glm::radians(boatRotAngle), glm::vec3(0.0, 1.0, 0.0));
+	}
+	if (key == GLFW_KEY_RIGHT)
+	{
+		view = glm::rotate(view, glm::radians(-boatRotAngle), glm::vec3(0.0, 1.0, 0.0));
+		view = glm::translate(view, glm::vec3(0.0f, -0.0f, -0.5f));
+		view = glm::rotate(view, glm::radians(-CAMERA_ROTATION), glm::vec3(0.0, 1.0, 0.0));
+		view = glm::translate(view, glm::vec3(0.0f, -0.0f, 0.5f));
+		view = glm::rotate(view, glm::radians(boatRotAngle), glm::vec3(0.0, 1.0, 0.0));
 	}
 }
 
