@@ -7,58 +7,61 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "boat.h""
+#include "boat.h"
 #include "rudder.h"
 #include "shprogram.h"
 #include "wheel.h"
 #include "skybox.h"
 #include "water.h"
 
+
+
 using namespace std;
 
 const GLuint WIDTH = 1000, HEIGHT = 600;
 const float CAMERA_ROTATION = 2.0;
+extern GLfloat rudderRotAngle;
+extern GLfloat wheelRotAngle;
+GLfloat brightness = 1.0;
+
+glm::mat4 projection;
+glm::mat4 view;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
-	if (key == GLFW_KEY_W)
-	{
-		float x = 0.3*rotationFactor;
-		boatRotAngle += x;
-		view = glm::rotate(view, glm::radians(x), glm::vec3(0.0, 1.0, 0.0));
-	}
 	if (key == GLFW_KEY_A)
 	{
 		wheelRotAngle -= 5.0;
 		rudderRotAngle += 0.6f;
-		rotationFactor -= 0.01;
 	}
 	if (key == GLFW_KEY_D)
 	{
 		wheelRotAngle += 5.0;
 		rudderRotAngle -= 0.6f;
-		rotationFactor += 0.01;
 	}
 	if (key == GLFW_KEY_LEFT)
 	{
-		view = glm::rotate(view, glm::radians(-boatRotAngle), glm::vec3(0.0, 1.0, 0.0));
 		view = glm::translate(view, glm::vec3(0.0f, -0.0f, -0.5f));
 		view = glm::rotate(view, glm::radians(CAMERA_ROTATION), glm::vec3(0.0, 1.0, 0.0));
 		view = glm::translate(view, glm::vec3(0.0f, -0.0f, 0.5f));
-		view = glm::rotate(view, glm::radians(boatRotAngle), glm::vec3(0.0, 1.0, 0.0));
 	}
 	if (key == GLFW_KEY_RIGHT)
 	{
-		view = glm::rotate(view, glm::radians(-boatRotAngle), glm::vec3(0.0, 1.0, 0.0));
 		view = glm::translate(view, glm::vec3(0.0f, -0.0f, -0.5f));
 		view = glm::rotate(view, glm::radians(-CAMERA_ROTATION), glm::vec3(0.0, 1.0, 0.0));
 		view = glm::translate(view, glm::vec3(0.0f, -0.0f, 0.5f));
-		view = glm::rotate(view, glm::radians(boatRotAngle), glm::vec3(0.0, 1.0, 0.0));
+	}
+	if (key == GLFW_KEY_UP)
+	{
+		brightness += 0.01;
+	}
+	if (key == GLFW_KEY_DOWN)
+	{
+		brightness -= 0.01;
 	}
 }
-
 
 
 ostream& operator<<(ostream& os, const glm::mat4& mx)
@@ -151,6 +154,9 @@ int main()
 			updateRudder(theProgram2, VAO2, EBO2);
 			updateWater(theProgram4, VAO5, EBO5);
 			updateWheel(theProgram2, VAO3, EBO3);
+
+			if (brightness >= 1.25) brightness = 1.25;
+			if (brightness <= 0.5) brightness = 0.5;
 			// Swap the screen buffers
 			glfwSwapBuffers(window);
 		}
